@@ -3,21 +3,21 @@ package br.com.sistema.loginapi.models;
 
 public class LoginErro {
 	
-	private Long statusHttp;
+	private int statusHttp;
 	private String mensagem;
 	
 	public LoginErro() {
 	}
 	
-	public LoginErro(Long statusHttp, String mensagem) {
+	public LoginErro(int statusHttp, String mensagem) {
 		this.statusHttp = statusHttp;
 		this.mensagem = mensagem;
 	}
 	
-	public Long getStatusHttp() {
+	public int getStatusHttp() {
 		return statusHttp;
 	}
-	public void setStatusHttp(Long statusHttp) {
+	public void setStatusHttp(int statusHttp) {
 		this.statusHttp = statusHttp;
 	}
 	public String getMensagem() {

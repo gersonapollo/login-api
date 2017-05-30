@@ -1,6 +1,8 @@
 package br.com.sistema.loginapi.services;
 
+import java.time.LocalDateTime;
 import java.util.List;
+import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -8,6 +10,7 @@ import org.springframework.stereotype.Service;
 
 import br.com.sistema.loginapi.models.Usuario;
 import br.com.sistema.loginapi.repository.UsuarioRepository;
+import br.com.sistema.loginapi.services.exceptions.UsuarioJaCadastradoExcepition;
 import br.com.sistema.loginapi.services.exceptions.UsuarioNaoCadastradoExcepition;
 
 @Service
@@ -21,17 +24,18 @@ public class UsuarioService {
 	}
 	
 	public Usuario cadastrar(Usuario usuario) {
+		verificaEmailCadastrado(usuario);
 		usuario.setId(null);
-		return repository.save(usuario);
-	}
-	
-	public Usuario alterar(Usuario usuario) {
-		consultar(usuario.getId());
-		return repository.save(usuario);
+		usuario.setDataCriacao(LocalDateTime.now());
+		usuario.setDataAtualizacao(LocalDateTime.now());
+		usuario.setUltimoLogin(LocalDateTime.now());
+		usuario.setToken(UUID.randomUUID().toString());
 		
+		return repository.save(usuario);
 	}
 	
-	public Usuario consultar(Long id) {
+	
+	public Usuario consultar(String id) {
 		Usuario usuario = repository.findOne(id);
 		if(usuario == null) {
 			throw new UsuarioNaoCadastradoExcepition("Usuario nao cadastrado");
@@ -39,8 +43,19 @@ public class UsuarioService {
 		
 		return usuario;
 	}
+
+	public Usuario alterar(Usuario usuario) {
+		Usuario usuarioCadastrado = consultar(usuario.getId());
+		
+		usuario.setToken(usuarioCadastrado.getToken());
+		usuario.setDataAtualizacao(LocalDateTime.now());
+		usuario.setDataCriacao(usuarioCadastrado.getDataCriacao());
+		usuario.setUltimoLogin(usuarioCadastrado.getUltimoLogin());
+
+		return repository.save(usuario);
+	}
 	
-	public void remover(Long id) {
+	public void remover(String id) {
 		try {
 			repository.delete(id);
 		} catch (EmptyResultDataAccessException e) {
@@ -48,5 +63,11 @@ public class UsuarioService {
 		}
 	}
 	
+	private void verificaEmailCadastrado(Usuario usuario) {
+		Usuario usuarioCadastrado = repository.findByEmail(usuario.getEmail());
+		if(usuarioCadastrado != null) {
+				throw new UsuarioJaCadastradoExcepition("Email ja cadastrado");
+		}
+	}
 
 }
