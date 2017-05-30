@@ -19,10 +19,6 @@ public class UsuarioService {
 	@Autowired
 	private UsuarioRepository repository;
 	
-	public List<Usuario> buscarTodos(){
-		return repository.findAll();
-	}
-	
 	public Usuario cadastrar(Usuario usuario) {
 		verificaEmailCadastrado(usuario);
 		usuario.setId(null);
@@ -55,12 +51,8 @@ public class UsuarioService {
 		return repository.save(usuario);
 	}
 	
-	public void remover(String id) {
-		try {
-			repository.delete(id);
-		} catch (EmptyResultDataAccessException e) {
-			throw new UsuarioNaoCadastradoExcepition("Usuario nao Cadastrado");
-		}
+	public Usuario atualizar(Usuario usuario) {
+		return repository.save(usuario);
 	}
 	
 	private void verificaEmailCadastrado(Usuario usuario) {

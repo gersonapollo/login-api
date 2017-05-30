@@ -9,6 +9,8 @@ import org.springframework.stereotype.Service;
 
 import br.com.sistema.loginapi.models.Usuario;
 import br.com.sistema.loginapi.repository.UsuarioRepository;
+import br.com.sistema.loginapi.services.exceptions.SessaoInvalidaException;
+import br.com.sistema.loginapi.services.exceptions.TokenUsuarioInvalidoException;
 import br.com.sistema.loginapi.services.exceptions.UsuarioSenhaIncorretaException;
 
 @Service
@@ -17,6 +19,9 @@ public class LoginService {
 	
 	@Autowired
 	private UsuarioRepository repository;
+	
+	@Autowired
+	private UsuarioService usuarioService;
 	
 	public Usuario validarUsuarioSenha(String autorization) {
 		System.out.println(autorization);
@@ -31,6 +36,7 @@ public class LoginService {
 		validarSenha(usuario, senha);
 		
 		usuario.setUltimoLogin(LocalDateTime.now());
+		usuarioService.atualizar(usuario);
 		
 		return usuario;
 	}
@@ -44,16 +50,35 @@ public class LoginService {
 		return usuario;
 	}
 	
+	public Usuario obterPerfilUsuario(String id, String token) {
+		
+		Usuario usuario = usuarioService.consultar(id);
+		validarTokenUsuario(usuario, token);
+		return usuario;
+	}
+	
 	private void validarSenha(Usuario usuario, String senha) {
 		if(!senha.equals(usuario.getSenha())) {
-			throw new UsuarioSenhaIncorretaException("Senha Invalida!");
+			throw new UsuarioSenhaIncorretaException("Senha Inválida!");
 		}
 	}
-
-//	public Usuario obterPerfilUsuario(String id, String token) {
-//
-//		
-//	}
+	
+	private void validarTokenUsuario(Usuario usuario, String token) {
+		String tokenCadastrado = usuario.getToken();
+		if (token.trim().isEmpty() || !tokenCadastrado.equals(token)) {
+			throw new TokenUsuarioInvalidoException("Token inválido!");
+		}
+		LocalDateTime trintaMinutosAtras = LocalDateTime.now().minusMinutes(30l);
+		System.out.println(trintaMinutosAtras);
+		System.out.println(usuario.getUltimoLogin());
+		int comparacao = usuario.getUltimoLogin().compareTo(trintaMinutosAtras);
+		System.out.println(comparacao);
+		if(comparacao < 0) {
+			 throw new SessaoInvalidaException("Sessao Inválida");
+		}
+		
+	}
+	
 
 	
 }

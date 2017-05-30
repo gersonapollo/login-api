@@ -36,9 +36,9 @@ public class LoginResources {
 	}
 	
 	@RequestMapping(value = "/{id}", method= RequestMethod.GET)
-	public void perfilUsuario(@PathVariable ("id") String id, @RequestHeader(value="Token") String token){
-//		loginService.obterPerfilUsuario(id, token);
-		
+	public ResponseEntity<Usuario> perfilUsuario(@PathVariable ("id") String id, @RequestHeader(value="Token") String token){
+		Usuario usuario = loginService.obterPerfilUsuario(id, token);
+		return ResponseEntity.status(HttpStatus.OK).body(usuario);
 	}
 	
 	@RequestMapping(method = RequestMethod.POST)
