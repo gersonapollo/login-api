@@ -32,7 +32,7 @@ public class LoginResourceTests {
 
 	@Before
 	public void prepararDadosParaTestes() {
-		url = "http://localhost:8080";
+		url = "https://stormy-gorge-50044.herokuapp.com"; //"http://localhost:8080";
 		urn = "/login";
 		uri = URI.create(url+urn);
 		restTemplate  = new RestTemplate();

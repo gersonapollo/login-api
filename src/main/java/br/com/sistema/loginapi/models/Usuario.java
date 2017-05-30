@@ -12,8 +12,11 @@ import javax.persistence.Id;
 import org.hibernate.annotations.GenericGenerator;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonProperty.Access;
 
 @Entity
 public class Usuario {
@@ -50,6 +53,7 @@ public class Usuario {
 	public void setEmail(String email) {
 		this.email = email;
 	}
+	@JsonProperty(access = Access.WRITE_ONLY)
 	public String getSenha() {
 		return senha;
 	}
