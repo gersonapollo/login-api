@@ -5,6 +5,7 @@ import java.net.URI;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
@@ -28,6 +29,7 @@ public class LoginResources {
 	@Autowired
 	private UsuarioService usuarioService;
 	
+	@CrossOrigin
 	@RequestMapping(method = RequestMethod.GET)
 	public ResponseEntity<Usuario> efetuaLogin(@RequestHeader(value="Authorization") String autorization) {
 		Usuario usuario = loginService.validarUsuarioSenha(autorization);
@@ -35,12 +37,14 @@ public class LoginResources {
 		return ResponseEntity.status(HttpStatus.OK).body(usuario);
 	}
 	
+	@CrossOrigin
 	@RequestMapping(value = "/{id}", method= RequestMethod.GET)
 	public ResponseEntity<Usuario> perfilUsuario(@PathVariable ("id") String id, @RequestHeader(value="Token") String token){
 		Usuario usuario = loginService.obterPerfilUsuario(id, token);
 		return ResponseEntity.status(HttpStatus.OK).body(usuario);
 	}
 	
+	@CrossOrigin
 	@RequestMapping(method = RequestMethod.POST)
 	public ResponseEntity<Usuario> cadastrarUsuario(@RequestBody Usuario usuario) {
 		usuario = usuarioService.cadastrar(usuario);
@@ -50,6 +54,7 @@ public class LoginResources {
 		return ResponseEntity.created(uri).body(usuario);
 	}
 	
+	@CrossOrigin
 	@RequestMapping(value = "/{id}", method= RequestMethod.PUT)
 	public ResponseEntity<Usuario> alterarUsuario(@RequestBody Usuario usuario, @PathVariable("id") String id) {
 		usuario.setId(id);
